@@ -28,7 +28,12 @@ jobs:
           DOCKER_BUILDKIT: 1
 
       - name: Deploy to Server
-        run: |
-          ssh ${{ vars.REMOTE_USER }}@${{ vars.REMOTE_SERVER }} "docker pull ${{ vars.DOCKER_USERNAME }}/deploy-uap:latest && docker-compose down && docker-compose up -d"
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.REMOTE_SERVER }}
+          username: ${{ vars.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ vars.DOCKER_USERNAME }}/deploy-uap:latest
+            docker-compose down
+            docker-compose up -d
