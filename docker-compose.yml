@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  webapp:
+    # image: amilcarrey/deploy-uap:latest 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VIRTUAL_HOST=webapp.local
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    userns_mode: 'host'
+    privileged: true
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf	
+networks:
+  default:
+    name: exposed-services
