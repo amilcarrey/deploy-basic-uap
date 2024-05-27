@@ -35,5 +35,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker pull ${{ vars.DOCKER_USERNAME }}/deploy-uap:latest
-            docker compose down
-            docker compose up -d
+            docker run -d -p 80:3000 --name webapp --restart unless-stopped ${{ vars.DOCKER_USERNAME }}/deploy-uap:latest
